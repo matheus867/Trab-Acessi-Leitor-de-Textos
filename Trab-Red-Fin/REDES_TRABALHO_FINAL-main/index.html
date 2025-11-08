@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novembro Azul - Conscientização sobre o Câncer de Próstata</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --azul-principal: #007bff;
+            --azul-claro: #cce5ff;
+            --azul-escuro: #0056b3;
+            --cinza-claro: #f8f9fa;
+            --cinza-escuro: #343a40;
+            --branco: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--cinza-claro);
+            color: var(--cinza-escuro);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--azul-principal), var(--azul-escuro));
+            color: var(--branco);
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: var(--branco);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+        }
+        
+        .logo i {
+            color: var(--azul-principal);
+            font-size: 2.5rem;
+            font-style: normal;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            background-color: var(--branco);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--cinza-escuro);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--azul-claro);
+            color: var(--azul-escuro);
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--azul-escuro);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .hamburger.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+        
+        section {
+            padding: 3rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--azul-escuro);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--azul-principal);
+            margin: 0.5rem auto;
+        }
+        
+        .card {
+            background-color: var(--branco);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--azul-principal);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--cinza-escuro);
+        }
+        
+        .chart-container { height: 500px; margin-bottom: 2rem; }
+        
+        .insight-box {
+            background-color: var(--azul-claro);
+            border-left: 4px solid var(--azul-principal);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .insight-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--azul-escuro);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .info-item { display: flex; align-items: flex-start; }
+        
+        .info-icon {
+            background-color: var(--azul-claro);
+            color: var(--azul-principal);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            font-style: normal;
+        }
+        
+        footer {
+            background-color: var(--cinza-escuro);
+            color: var(--branco);
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .footer-link { color: var(--branco); text-decoration: none; }
+        .footer-link:hover { text-decoration: underline; }
+        
+        .copyright {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .lgpd-notice {
+            background-color: var(--azul-claro);
+            border: 2px solid var(--azul-principal);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .lgpd-header {
+            background-color: var(--azul-escuro);
+            color: var(--branco);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .data-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+        .data-table th, .data-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+        .data-table th { background-color: var(--azul-claro); color: var(--azul-escuro); font-weight: 600; }
+        .data-table tr:hover { background-color: rgba(0, 123, 255, 0.05); }
+        .table-container { overflow-x: auto; margin: 1.5rem 0; }
+        .table-title { margin-bottom: 1rem; color: var(--azul-escuro); text-align: center; }
+        
+        .series-selector { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .series-checkbox { display: flex; align-items: center; margin-right: 1rem; }
+        .series-checkbox input { margin-right: 0.25rem; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .nav-links { position: fixed; top: 60px; left: -100%; width: 100%; background-color: var(--branco); flex-direction: column; box-shadow: 0 5px 10px rgba(0,0,0,0.1); transition: left 0.3s ease; }
+            .nav-links.active { left: 0; }
+            .nav-link { padding: 1rem; border-bottom: 1px solid var(--azul-claro); text-align: center; }
+            .hamburger { display: flex; }
+            .chart-container { height: 400px; }
+            .series-selector { justify-content: center; }
+        }
+
+        /* Botão de Acessibilidade */
+.accessibility-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--azul-principal);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.accessibility-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 200px;
+}
+    </style>
+</head>
+<body>
+    <!-- Botão de Acessibilidade -->
+<button class="accessibility-btn" id="accessibilityBtn" aria-label="Opções de acessibilidade">♿</button>
+
+<!-- Painel de Acessibilidade -->
+<div class="accessibility-panel" id="accessibilityPanel">
+<button id="readPageBtn">Ler Conteúdo da Página</button>
+<button id="stopReadingBtn">Parar Leitura</button>
+<button id="readSelectedBtn">Ler Texto Selecionado</button>
+<button id="increaseFontBtn">Aumentar Fonte</button>
+<button id="decreaseFontBtn">Diminuir Fonte</button>
+</div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo">
+                <i>👨🏻</i>
+            </div>
+            <div>
+                <h1>Novembro Azul</h1>
+                <p class="subtitle">Mês Mundial de Combate ao Câncer de Próstata</p>
+            </div>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="#sobre" class="nav-link">Sobre</a>
+                <a href="#dados" class="nav-link">Dados de Saúde</a>
+                <a href="#prevencao" class="nav-link">Prevenção</a>
+                <a href="#diagnostico" class="nav-link">Diagnóstico</a>
+                <a href="#privacidade" class="nav-link">Privacidade</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main>
+        <section id="sobre">
+            <h2 class="section-title">Sobre o Novembro Azul</h2>
+            <div class="card">
+                <p>Novembro Azul é um movimento internacional que acontece durante o mês de novembro para reforçar a importância da prevenção e do diagnóstico precoce do câncer de próstata.</p>
+                <p>A doença é o tipo de câncer mais comum entre os homens no Brasil (depois do câncer de pele não-melanoma). A campanha busca quebrar o preconceito masculino de ir ao médico e incentivar a realização dos exames preventivos.</p>
+                
+                <div class="grid-2" style="margin-top: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-number">71.730</div>
+                        <div class="stat-label">Novos casos estimados por ano no Brasil (2023-2025)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1º</div>
+                        <div class="stat-label">Posição entre os tipos de câncer mais comuns em homens</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="dados">
+            <h2 class="section-title">Dados de Procedimentos - Juiz de Fora/MG</h2>
+            <div class="card">
+                <p>Os dados abaixo, extraídos do Tabnet (SIA/SUS), mostram o volume mensal de procedimentos realizados em Juiz de Fora/MG (Jan-Ago 2025, dados simulados). Eles ilustram a jornada do paciente desde a consulta inicial até a confirmação diagnóstica.</p>
+                
+                <div class="series-selector" id="seriesSelector" style="justify-content: center; margin-bottom: 1.5rem;">
+                    <!-- Checkboxes gerados pelo JS -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+                
+                <div class="insight-box">
+                    <div class="insight-title">Análise do Funil Diagnóstico</div>
+                    <p id="insight-text">Os dados revelam um fluxo de cuidado lógico e eficiente. O grande volume de <strong>consultas especializadas</strong> representa a porta de entrada para a avaliação da saúde. Deste total, uma parte avança para o rastreamento com <strong>exames de PSA</strong>. Finalmente, apenas uma pequena fração com alta suspeita realiza a <strong>biópsia</strong> para confirmação. Isso demonstra que o sistema de saúde funciona como um filtro, focando os procedimentos mais complexos apenas nos casos realmente necessários.</p>
+                </div>
+                
+                <h3 class="table-title" id="tableTitle">Tabela de Dados Detalhados por Mês</h3>
+                <div class="table-container">
+                    <table class="data-table" id="dataTable">
+                        <!-- Tabela gerada pelo JS -->
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <section id="prevencao">
+            <h2 class="section-title">Prevenção e Fatores de Risco</h2>
+            <div class="card">
+                <p>A detecção precoce é a chave para o tratamento bem-sucedido do câncer de próstata. Homens a partir de 50 anos (ou 45, se houver fatores de risco) devem conversar com seu médico sobre o rastreamento.</p>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon"><i> симптомы </i></div>
+                        <div>
+                            <h3>Sintomas de Alerta</h3>
+                            <p>Fique atento a dificuldades para urinar, necessidade de urinar mais vezes, diminuição do jato de urina ou sangue na urina. Na fase inicial, pode não haver sintomas.</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i>👨‍⚕️</i></div>
+                        <div>
+                            <h3>Exame de Toque Retal</h3>
+                            <p>O médico avalia tamanho, forma e textura da próstata. É um exame rápido e essencial, que pode detectar anomalias.</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i>🩸</i></div>
+                        <div>
+                            <h3>Exame de PSA</h3>
+                            <p>Um exame de sangue que mede a quantidade do Antígeno Prostático Específico. Níveis altos podem indicar problemas na próstata.</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i>🥗</i></div>
+                        <div>
+                            <h3>Hábitos Saudáveis</h3>
+                            <p>Uma dieta rica em frutas, verduras e grãos, e pobre em gordura, além da prática de exercícios, ajuda a diminuir o risco.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="insight-box" style="margin-top: 2rem;">
+                    <div class="insight-title">Principais Fatores de Risco</div>
+                    <p>Os fatores mais importantes são: <strong>idade</strong> (risco aumenta significativamente após os 50 anos), <strong>história familiar</strong> (pai ou irmão com a doença antes dos 60 anos) e <strong>raça/etnia</strong> (maior incidência em homens negros).</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="diagnostico">
+            <h2 class="section-title">Diagnóstico e Tratamento</h2>
+            <div class="card">
+                <p>Se os exames de rastreamento (Toque e PSA) apresentarem alterações, o médico poderá solicitar outros exames para confirmar o diagnóstico, sendo a biópsia o principal deles.</p>
+                
+                <h3 style="margin-top: 1.5rem; color: var(--azul-escuro);">Opções de Tratamento</h3>
+                <p>O tratamento é individualizado e depende do estágio da doença. As opções incluem:</p>
+                <ul style="margin: 1rem 0 1rem 2rem;">
+                    <li>Vigilância Ativa (para tumores de baixa agressividade)</li>
+                    <li>Cirurgia (Prostatectomia Radical)</li>
+                    <li>Radioterapia</li>
+                    <li>Hormonioterapia</li>
+                    <li>Quimioterapia</li>
+                </ul>
+                
+                <div class="insight-box">
+                    <div class="insight-title">Entendendo a Escala de Gleason</div>
+                    <p>Após a biópsia, o câncer é classificado pela <strong>Escala de Gleason</strong>, que indica o grau de agressividade do tumor. A pontuação vai de 2 a 10.</p>
+                    <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+                        <li><strong>Gleason 6:</strong> Câncer de baixa agressividade, geralmente com bom prognóstico.</li>
+                        <li><strong>Gleason 7:</strong> Agressividade intermediária.</li>
+                        <li><strong>Gleason 8 a 10:</strong> Câncer de alta agressividade, com maior probabilidade de crescimento e metástase.</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;">Essa pontuação é fundamental para decidir o melhor tratamento a ser seguido.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="privacidade">
+            <h2 class="section-title">Privacidade e Proteção de Dados</h2>
+            <div class="card">
+                <div class="lgpd-notice">
+                    <div class="lgpd-header">🔒 COMPROMISSO COM A LGPD</div>
+                    <p>Esta plataforma educacional foi desenvolvida em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018). Não utilizamos cookies e não coletamos nenhum dado pessoal dos usuários. Todos os dados exibidos são agregados, anonimizados e provenientes de fontes públicas oficiais (DATASUS).</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>Novembro Azul - Combate ao Câncer de Próstata</p>
+            <div class="footer-links">
+                <a href="https://www.inca.gov.br" class="footer-link" target="_blank">INCA</a>
+                <a href="https://www.portaldaurologia.org.br" class="footer-link" target="_blank">Sociedade Brasileira de Urologia</a>
+                <a href="https://datasus.saude.gov.br" class="footer-link" target="_blank">DATASUS</a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 - Desenvolvido para Fins Educacionais.<br>
+                <strong>Conformidade LGPD: Esta plataforma não utiliza cookies nem coleta dados pessoais.</strong>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let chartData = [];
+
+        const colors = {
+            "Consultas Especializadas": '#007bff',
+            "Exames de PSA": '#17a2b8',
+            "Biópsias de Próstata": '#28a745'
+        };
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines.shift().split(';').map(h => h.trim().replace(/"/g, ''));
+            
+            const months = headers.slice(1);
+            const monthlyData = months.map(month => ({ "Mês": month }));
+
+            const procedureMap = {
+                "0201010410 BIOPSIA DE PROSTATA": "Biópsias de Próstata",
+                "0202030105 DOSAGEM DE ANTIGENO PROSTATICO ESPECIFICO (PSA)": "Exames de PSA",
+                "0301010072 CONSULTA MEDICA EM ATENCAO ESPECIALIZADA": "Consultas Especializadas"
+            };
+
+            lines.forEach(line => {
+                const values = line.split(';');
+                const procedureNameRaw = values.shift().trim().replace(/"/g, '');
+                const cleanProcedureName = procedureMap[procedureNameRaw];
+
+                if (cleanProcedureName) {
+                    values.forEach((value, index) => {
+                        if (monthlyData[index]) {
+                            monthlyData[index][cleanProcedureName] = parseInt(value.replace(/"/g, '').replace('-', '0')) || 0;
+                        }
+                    });
+                }
+            });
+            
+            return monthlyData;
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('dados.csv');
+                if (!response.ok) throw new Error(`Falha ao carregar dados.csv`);
+                const csvText = await response.text();
+                chartData = parseCSV(csvText);
+                return true;
+            } catch (error) {
+                console.error("Falha ao carregar dados CSV:", error);
+                document.getElementById('dados').innerHTML = `<div class="card" style="text-align:center; color: red;"><h2>Erro ao Carregar os Dados</h2><p>Não foi possível carregar o arquivo dados.csv. Verifique se ele está na mesma pasta que o arquivo HTML.</p></div>`;
+                return false;
+            }
+        }
+
+        let mainChart;
+        let selectedSeries = ['Consultas Especializadas', 'Exames de PSA', 'Biópsias de Próstata'];
+        
+        function initChart() {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            mainChart = new Chart(ctx, getChartConfig());
+            createSeriesSelector();
+            createTable();
+        }
+
+        function getChartConfig() {
+            const labels = chartData.map(item => item.Mês);
+            
+            const datasets = selectedSeries.map(series => ({
+                label: series,
+                data: chartData.map(item => item[series]),
+                borderColor: colors[series],
+                backgroundColor: colors[series] + '90',
+                tension: 0.3,
+                type: (series === 'Consultas Especializadas') ? 'line' : 'bar',
+                // *** MUDANÇA PRINCIPAL: Atribui cada série a um eixo Y ***
+                yAxisID: (series === 'Consultas Especializadas') ? 'yConsultas' : 'yProcedimentos'
+            }));
+            
+            return {
+                type: 'bar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { title: { display: true, text: `Procedimentos Mensais em Juiz de Fora`, font: { size: 16 } } },
+                    scales: {
+                        // *** MUDANÇA PRINCIPAL: Define os dois eixos Y ***
+                        yConsultas: { // Eixo da esquerda para Consultas
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nº de Consultas'
+                            }
+                        },
+                        yProcedimentos: { // Eixo da direita para PSA e Biópsias
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nº de Exames / Biópsias'
+                            },
+                            grid: { // Não desenha a grade deste eixo para não poluir o gráfico
+                                drawOnChartArea: false,
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mês de Atendimento'
+                            }
+                        }
+                    }
+                }
+            };
+        }
+        
+        function createSeriesSelector() {
+            const selectorContainer = document.getElementById('seriesSelector');
+            selectorContainer.innerHTML = '';
+            const availableSeries = Object.keys(chartData[0]).filter(k => k !== 'Mês');
+            
+            availableSeries.forEach(series => {
+                const isChecked = selectedSeries.includes(series);
+                const checkboxId = `series-${series.replace(/\s+/g, '-')}`;
+                const checkboxHTML = `
+                    <div class="series-checkbox">
+                        <input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''} onchange="toggleSeries('${series}')">
+                        <label for="${checkboxId}">${series}</label>
+                    </div>`;
+                selectorContainer.innerHTML += checkboxHTML;
+            });
+        }
+        
+        function toggleSeries(series) {
+            const index = selectedSeries.indexOf(series);
+            if (index > -1) selectedSeries.splice(index, 1);
+            else selectedSeries.push(series);
+            updateChart();
+        }
+        
+        function updateChart() {
+            mainChart.data.datasets = getChartConfig().data.datasets;
+            mainChart.update();
+        }
+        
+        function createTable() {
+            const table = document.getElementById('dataTable');
+            const columns = Object.keys(chartData[0]);
+            
+            let headerHTML = `<tr>${columns.map(c => `<th>${c}</th>`).join('')}</tr>`;
+            
+            let bodyHTML = chartData.map(item => 
+                `<tr>${columns.map(c => `<td>${item[c] === undefined ? 0 : item[c]}</td>`).join('')}</tr>`
+            ).join('');
+            
+            const totals = {};
+            columns.slice(1).forEach(col => {
+                totals[col] = chartData.reduce((sum, item) => sum + (item[col] || 0), 0);
+            });
+            bodyHTML += `<tr style="font-weight: bold; background-color: #cce5ff;"><td>Total</td>${columns.slice(1).map(c => `<td>${totals[c]}</td>`).join('')}</tr>`;
+            
+            table.innerHTML = headerHTML + bodyHTML;
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const dataLoaded = await loadData();
+            
+            if (dataLoaded) {
+                initChart();
+            }
+            
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('navLinks');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        });
+
+        // ========== FUNCIONALIDADES DE ACESSIBILIDADE ==========
+let speechSynthesis = window.speechSynthesis;
+let currentUtterance = null;
+let isReading = false;
+
+// Verificar suporte do navegador
+function checkTTSSupport() {
+    if (!('speechSynthesis' in window)) {
+        console.error('TTS não suportado neste navegador');
+        return false;
+    }
+    return true;
+}
+
+// Alternar painel de acessibilidade
+function toggleAccessibilityPanel() {
+    const panel = document.getElementById('accessibilityPanel');
+    if (panel) {
+        panel.classList.toggle('active');
+        console.log('Painel de acessibilidade:', panel.classList.contains('active') ? 'aberto' : 'fechado');
+    } else {
+        console.error('Elemento accessibilityPanel não encontrado');
+    }
+}
+
+// Ler conteúdo da página
+function readPageContent() {
+    if (!checkTTSSupport()) {
+        alert('Seu navegador não suporta leitura de texto por voz. Tente usar Chrome, Firefox ou Edge.');
+        return;
+    }
+    
+    if (isReading) {
+        stopReading();
+        return;
+    }
+    
+    const mainContent = document.querySelector('main');
+    if (!mainContent) {
+        console.error('Elemento main não encontrado');
+        return;
+    }
+    
+    const textContent = mainContent.innerText || mainContent.textContent;
+    
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+    }
+    
+    currentUtterance = new SpeechSynthesisUtterance(textContent);
+    currentUtterance.lang = 'pt-BR';
+    currentUtterance.rate = 0.9;
+    currentUtterance.pitch = 1;
+    
+    currentUtterance.onstart = function() {
+        isReading = true;
+        const readBtn = document.getElementById('readPageBtn');
+        if (readBtn) readBtn.textContent = 'Parar Leitura';
+        console.log('Leitura iniciada');
+    };
+    
+    currentUtterance.onend = function() {
+        isReading = false;
+        const readBtn = document.getElementById('readPageBtn');
+        if (readBtn) readBtn.textContent = 'Ler Conteúdo da Página';
+        console.log('Leitura finalizada');
+    };
+    
+    currentUtterance.onerror = function(event) {
+        isReading = false;
+        const readBtn = document.getElementById('readPageBtn');
+        if (readBtn) readBtn.textContent = 'Ler Conteúdo da Página';
+        console.error('Erro na leitura:', event.error);
+        alert('Erro na leitura de texto. Verifique as permissões do navegador.');
+    };
+    
+    speechSynthesis.speak(currentUtterance);
+}
+
+// Parar leitura
+function stopReading() {
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+        isReading = false;
+        const readBtn = document.getElementById('readPageBtn');
+        if (readBtn) readBtn.textContent = 'Ler Conteúdo da Página';
+        console.log('Leitura parada');
+    }
+}
+
+// Ler texto selecionado
+function readSelectedText() {
+    if (!checkTTSSupport()) {
+        alert('Seu navegador não suporta leitura de texto por voz.');
+        return;
+    }
+    
+    const selectedText = window.getSelection().toString().trim();
+    
+    if (selectedText) {
+        if (speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
+        
+        currentUtterance = new SpeechSynthesisUtterance(selectedText);
+        currentUtterance.lang = 'pt-BR';
+        currentUtterance.rate = 0.9;
+        
+        speechSynthesis.speak(currentUtterance);
+        console.log('Lendo texto selecionado:', selectedText.substring(0, 50) + '...');
+    } else {
+        alert('Por favor, selecione um texto para ser lido.');
+    }
+}
+
+// Alterar tamanho da fonte
+function changeFontSize(direction) {
+    const html = document.documentElement;
+    const currentSize = parseFloat(getComputedStyle(html).fontSize);
+    let newSize;
+    
+    if (direction === 'increase') {
+        newSize = Math.min(currentSize * 1.1, 24);
+    } else {
+        newSize = Math.max(currentSize * 0.9, 12);
+    }
+    
+    html.style.fontSize = newSize + 'px';
+    console.log('Tamanho da fonte alterado para:', newSize + 'px');
+}
+    </script>
+</body>
+</html>
